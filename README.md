@@ -22,3 +22,4 @@ import (
 ## Documentation
 
 - [![GoDoc](https://godoc.org/github.com/servusdei2018/shards?status.svg)](https://godoc.org/github.com/servusDei2018/shards)
+- [![GoPkg](https://img.shields.io/badge/pkg.go.dev-docs-brightgreen)](https://pkg.go.dev/github.com/servusDei2018/shards)
