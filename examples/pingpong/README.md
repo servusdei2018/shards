@@ -1,5 +1,3 @@
-<img align="right" src="http://bwmarrin.github.io/discordgo/img/discordgo.png">
-
 ## DiscordGo/Shards Ping Pong Example
 
 This example demonstrates how to utilize [DiscordGo](github.com/bwmarrin/discordgo)
@@ -46,6 +44,6 @@ The below example shows how to start the bot:
 ```sh
 ./pingpong -t YOUR_BOT_TOKEN
 [INFO] Starting shard manager...
-[INFO] Shard #1 connected.
+[INFO] Shard #0 connected.
 [SUCCESS] Bot is now running.  Press CTRL-C to exit.
 ```
