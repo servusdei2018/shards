@@ -10,7 +10,7 @@ import (
 const (
 	// How long to pause between connecting shards.
 	TIMELIMIT = time.Second * 5
-	// Shards library version. Major-Minor-Release.
+	// Shards library version. Follows semantic versioning (semver.org).
 	VERSION = "1.0.0"
 )
 
