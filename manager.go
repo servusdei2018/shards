@@ -159,12 +159,17 @@ func (m *Manager) Start() (err error) {
 	m.Lock()
 	defer m.Unlock()
 
+	// Ensure that we have at least one Shard.
+	if m.ShardCount < 1 {
+		m.ShardCount = 1
+	}
+
 	// Initialize Shards.
 	for i := 0; i < m.ShardCount; i++ {
 		m.Shards = append(m.Shards, &Shard{})
 	}
 
-	// Initialize shards and add event handlers.
+	// Add event handlers to Shards and connect them.
 	for id, shard := range m.Shards {
 		// Add handlers to this shard.
 		for _, handler := range m.handlers {
