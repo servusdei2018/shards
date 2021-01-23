@@ -1,4 +1,4 @@
-# Shards
+# Shards [![Build Status](https://travis-ci.com/servusDei2018/shards.svg?branch=master)](https://travis-ci.com/servusDei2018/shards) ![](https://img.shields.io/github/issues/teamdei/tandem) ![](https://img.shields.io/github/downloads/teamdei/tandem/latest/total) [![CodeFactor](https://www.codefactor.io/repository/github/servusdei2018/shards/badge)](https://www.codefactor.io/repository/github/servusdei2018/shards)
 Configurable, scalable and automatic sharding library for `discordgo`.
 
 ### Installing
