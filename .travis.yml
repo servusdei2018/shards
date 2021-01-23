@@ -4,7 +4,4 @@ go:
 - 1.x
 - master
 
-script: go get github.com/servusdei2018/shards && go test
-
-notifications:
-  email: false
+script: go build
