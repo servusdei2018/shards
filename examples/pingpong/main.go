@@ -43,7 +43,7 @@ func main() {
 	Mgr.AddHandler(onConnect)
 
 	// In this example, we only care about receiving message events.
-	Mgr.RegisterIntent(discordgo.MakeIntent(discordgo.IntentsGuildMessages))
+	Mgr.RegisterIntent(discordgo.IntentsGuildMessages)
 
 	fmt.Println("[INFO] Starting shard manager...")
 
