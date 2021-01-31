@@ -13,7 +13,7 @@ type Manager struct {
 	// Discord gateway.
 	Gateway *discordgo.Session
 	// Discord intent.
-	Intent *discordgo.Intent
+	Intent discordgo.Intent
 	// Shards managed by this Manager.
 	Shards []*Shard
 	// Total Shard count.
@@ -81,7 +81,7 @@ func New(token string) (mgr *Manager, err error) {
 }
 
 // RegisterIntent sets the Intent for all Shards' sessions.
-func (m *Manager) RegisterIntent(intent *discordgo.Intent) {
+func (m *Manager) RegisterIntent(intent discordgo.Intent) {
 	m.Lock()
 	defer m.Unlock()
 	m.Intent = intent

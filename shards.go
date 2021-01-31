@@ -55,7 +55,7 @@ func (s *Shard) GuildCount() (count int) {
 
 // Init initializes a shard with a bot token, its Shard ID, the total
 // amount of shards, and a Discord intent.
-func (s *Shard) Init(token string, ID, ShardCount int, intent *discordgo.Intent) (err error) {
+func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) (err error) {
 	s.Lock()
 	defer s.Unlock()
 
