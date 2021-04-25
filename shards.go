@@ -1,6 +1,7 @@
 package shards
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -11,7 +12,7 @@ const (
 	// How long to pause between connecting shards.
 	TIMELIMIT = time.Second * 5
 	// Shards library version. Follows semantic versioning (semver.org).
-	VERSION = "1.0.0"
+	VERSION = "1.1.0"
 )
 
 // A Shard represents a shard.
@@ -37,6 +38,22 @@ func (s *Shard) AddHandler(handler interface{}) {
 	defer s.Unlock()
 
 	s.handlers = append(s.handlers, handler)
+}
+
+// ApplicationCommandCreate registers an application command for a Shard.
+//
+// Shouldn't be called before Initialization.
+func (s *Shard) ApplicationCommandCreate(guildID string, cmd *discordgo.ApplicationCommand) error {
+	s.Lock()
+	defer s.Unlock()
+
+	// Referencing s.Session before Initialization will result in a nil pointer dereference panic.
+	if s.Session == nil {
+		return fmt.Errorf("error: shard.ApplicationCommandCreate must not be called before shard.Init")
+	}
+	
+	_, err := s.Session.ApplicationCommandCreate(s.Session.State.User.ID, guildID, cmd)
+	return err
 }
 
 // GuildCount returns the amount of guilds that a Shard is handling.

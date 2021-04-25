@@ -21,6 +21,7 @@ type Manager struct {
 
 	// Event handlers.
 	handlers []interface{}
+
 	// Discord bot token.
 	token string
 }
@@ -35,6 +36,21 @@ func (m *Manager) AddHandler(handler interface{}) {
 	for _, shard := range m.Shards {
 		shard.AddHandler(handler)
 	}
+}
+
+// ApplicationCommandCreate registers an application command for all Shards.
+func (m *Manager) ApplicationCommandCreate(guildID string, cmd *discordgo.ApplicationCommand) (errs []error) {
+	m.Lock()
+	defer m.Unlock()
+
+	for _, shard := range m.Shards {
+		err := shard.ApplicationCommandCreate(guildID, cmd)
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	return
 }
 
 // GuildCount returns the amount of guilds that a Manager's Shards are
@@ -200,6 +216,5 @@ func (m *Manager) Shutdown() (err error) {
 			return
 		}
 	}
-
 	return
 }
