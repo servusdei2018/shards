@@ -39,11 +39,9 @@ func (m *Manager) AddHandler(handler interface{}) {
 }
 
 // ApplicationCommandCreate registers an application command for all Shards.
-func (m *Manager) ApplicationCommandCreate(guildID string, cmd *discordgo.ApplicationCommand) []error {
+func (m *Manager) ApplicationCommandCreate(guildID string, cmd *discordgo.ApplicationCommand) (errs []error) {
 	m.Lock()
 	defer m.Unlock()
-
-	errs := make([]error, 0)
 
 	for _, shard := range m.Shards {
 		err := shard.ApplicationCommandCreate(guildID, cmd)
@@ -51,7 +49,8 @@ func (m *Manager) ApplicationCommandCreate(guildID string, cmd *discordgo.Applic
 			errs = append(errs, err)
 		}
 	}
-	return errs
+
+	return
 }
 
 // GuildCount returns the amount of guilds that a Manager's Shards are
