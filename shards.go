@@ -47,7 +47,7 @@ func (s *Shard) ApplicationCommandCreate(guildID string, cmd *discordgo.Applicat
 	s.Lock()
 	defer s.Unlock()
 
-	// Return an error rather than a nil pointer dereference panic
+	// Referencing s.Session before Initialization will result in a nil pointer dereference panic.
 	if s.Session == nil {
 		return fmt.Errorf("error: shard.ApplicationCommandCreate must not be called before shard.Init")
 	}
