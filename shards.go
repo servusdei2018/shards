@@ -1,6 +1,7 @@
 package shards
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -41,11 +42,16 @@ func (s *Shard) AddHandler(handler interface{}) {
 
 // ApplicationCommandCreate registers an application command for a Shard.
 //
-// Make sure to call it after opening the connection.
+// Shouldn't be called before Initialization.
 func (s *Shard) ApplicationCommandCreate(guildID string, cmd *discordgo.ApplicationCommand) error {
 	s.Lock()
 	defer s.Unlock()
 
+	// Return an error rather than a nil pointer dereference panic
+	if s.Session == nil {
+		return fmt.Errorf("error: shard.ApplicationCommandCreate must not be called before shard.Init")
+	}
+	
 	_, err := s.Session.ApplicationCommandCreate(s.Session.State.User.ID, guildID, cmd)
 	return err
 }
