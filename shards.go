@@ -11,7 +11,7 @@ const (
 	// How long to pause between connecting shards.
 	TIMELIMIT = time.Second * 5
 	// Shards library version. Follows semantic versioning (semver.org).
-	VERSION = "1.0.0"
+	VERSION = "1.1.0"
 )
 
 // A Shard represents a shard.
@@ -37,6 +37,17 @@ func (s *Shard) AddHandler(handler interface{}) {
 	defer s.Unlock()
 
 	s.handlers = append(s.handlers, handler)
+}
+
+// ApplicationCommandCreate registers an application command for a Shard.
+//
+// Make sure to call it after opening the connection.
+func (s *Shard) ApplicationCommandCreate(appID string, guildID string, cmd *discordgo.ApplicationCommand) error {
+	s.Lock()
+	defer s.Unlock()
+
+	_, err := s.Session.ApplicationCommandCreate(appID, guildID, cmd)
+	return err
 }
 
 // GuildCount returns the amount of guilds that a Shard is handling.
