@@ -39,14 +39,14 @@ func (m *Manager) AddHandler(handler interface{}) {
 }
 
 // ApplicationCommandCreate registers an application command for all Shards.
-func (m *Manager) ApplicationCommandCreate(appID string, guildID string, cmd *discordgo.ApplicationCommand) []error {
+func (m *Manager) ApplicationCommandCreate(guildID string, cmd *discordgo.ApplicationCommand) []error {
 	m.Lock()
 	defer m.Unlock()
 
 	errs := make([]error, 0)
 
 	for _, shard := range m.Shards {
-		err := shard.ApplicationCommandCreate(appID, guildID, cmd)
+		err := shard.ApplicationCommandCreate(guildID, cmd)
 		if err != nil {
 			errs = append(errs, err)
 		}

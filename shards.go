@@ -42,11 +42,11 @@ func (s *Shard) AddHandler(handler interface{}) {
 // ApplicationCommandCreate registers an application command for a Shard.
 //
 // Make sure to call it after opening the connection.
-func (s *Shard) ApplicationCommandCreate(appID string, guildID string, cmd *discordgo.ApplicationCommand) error {
+func (s *Shard) ApplicationCommandCreate(guildID string, cmd *discordgo.ApplicationCommand) error {
 	s.Lock()
 	defer s.Unlock()
 
-	_, err := s.Session.ApplicationCommandCreate(appID, guildID, cmd)
+	_, err := s.Session.ApplicationCommandCreate(s.Session.State.User.ID, guildID, cmd)
 	return err
 }
 
