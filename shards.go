@@ -51,7 +51,7 @@ func (s *Shard) ApplicationCommandCreate(guildID string, cmd *discordgo.Applicat
 	if s.Session == nil {
 		return fmt.Errorf("error: shard.ApplicationCommandCreate must not be called before shard.Init")
 	}
-	
+
 	_, err := s.Session.ApplicationCommandCreate(s.Session.State.User.ID, guildID, cmd)
 	return err
 }
@@ -85,6 +85,10 @@ func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) 
 	if err != nil {
 		return
 	}
+
+	// Shard the session.
+	s.Session.ShardCount = s.ShardCount
+	s.Session.ShardID = s.ID
 
 	// Identify our intent.
 	s.Session.Identify.Intents = intent

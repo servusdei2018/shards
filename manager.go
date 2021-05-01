@@ -181,6 +181,7 @@ func (m *Manager) Start() (err error) {
 	}
 
 	// Initialize Shards.
+	m.Shards = []*Shard{}
 	for i := 0; i < m.ShardCount; i++ {
 		m.Shards = append(m.Shards, &Shard{})
 	}
