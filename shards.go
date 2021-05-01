@@ -86,6 +86,10 @@ func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) 
 		return
 	}
 
+	// Shard the session.
+	s.Session.ShardCount = s.ShardCount
+	s.Session.ShardID = s.ID
+
 	// Identify our intent.
 	s.Session.Identify.Intents = intent
 
