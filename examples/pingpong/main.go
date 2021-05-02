@@ -61,7 +61,9 @@ func main() {
 	<-sc
 
 	// Cleanly close down the Manager.
+	fmt.Println("[INFO] Stopping shard manager...")
 	Mgr.Shutdown()
+	fmt.Println("[SUCCESS] Shard manager stopped. Bot is shut down.")
 }
 
 // This function will be called (due to AddHandler above) every time one
