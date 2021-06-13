@@ -1,6 +1,11 @@
 # Shards [![Build Status](https://travis-ci.com/servusDei2018/shards.svg?branch=master)](https://travis-ci.com/servusDei2018/shards) ![](https://img.shields.io/github/issues/teamdei/tandem) ![](https://img.shields.io/github/downloads/teamdei/tandem/latest/total) [![CodeFactor](https://www.codefactor.io/repository/github/servusdei2018/shards/badge)](https://www.codefactor.io/repository/github/servusdei2018/shards)
 Configurable, scalable and automatic sharding library for `discordgo`.
 
+## Features
+ - Automatic scaling: head-ache free configuration runs out of the box.
+ - [Zero-downtime restarts](https://pkg.go.dev/github.com/servusdei2018/shards#Manager.Restart): make downtime a thing of the past.
+ - [Slash commands](https://pkg.go.dev/github.com/servusdei2018/shards#Manager.ApplicationCommandCreate): integrate the latest in Discord functionality.
+
 ### Installing
 
 This assumes you already have a working Go environment, if not please [install Go](https://golang.org/doc/install) first.
