@@ -96,9 +96,12 @@ func New(token string) (mgr *Manager, err error) {
 	return
 }
 
-func (mgr *Manager) SetShardCount(count int) {
+func (m *Manager) SetShardCount(count int) {
+	m.Lock()
+	defer m.Unlock()
+
 	if count > 0 {
-		mgr.ShardCount = count
+		m.ShardCount = count
 	}
 }
 
