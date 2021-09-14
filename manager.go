@@ -96,6 +96,12 @@ func New(token string) (mgr *Manager, err error) {
 	return
 }
 
+func (mgr *Manager) SetShardCount(count int) {
+	if count > 0 {
+		mgr.ShardCount = count
+	}
+}
+
 // RegisterIntent sets the Intent for all Shards' sessions.
 func (m *Manager) RegisterIntent(intent discordgo.Intent) {
 	m.Lock()
