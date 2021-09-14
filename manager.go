@@ -68,7 +68,6 @@ func (m *Manager) GuildCount() (count int) {
 
 // New creates a new Manager with the recommended number of shards.
 // After calling New, call Start to begin connecting the shards.
-// You may override ShardCount to use an arbitrary amount of shards.
 //
 // Example:
 // mgr := shards.New("Bot TOKEN")
