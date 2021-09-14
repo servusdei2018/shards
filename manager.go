@@ -7,6 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// Manager facilitates the management of Shards.
 type Manager struct {
 	sync.RWMutex
 
