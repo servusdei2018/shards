@@ -96,6 +96,7 @@ func New(token string) (mgr *Manager, err error) {
 	return
 }
 
+// SetShardCount sets the shard count
 func (m *Manager) SetShardCount(count int) {
 	m.Lock()
 	defer m.Unlock()
