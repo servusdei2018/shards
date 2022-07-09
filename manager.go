@@ -157,6 +157,10 @@ func (m *Manager) Restart() (err error) {
 		mgr.AddHandler(handler)
 	}
 
+	// Apply the same intent
+	mgr.RegisterIntent(m.Intent)
+	
+
 	// We have no need to lock the old Manager at this point, and
 	// starting the new one will take some time.
 	m.RUnlock()
