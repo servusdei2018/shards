@@ -141,7 +141,7 @@ func (m *Manager) SessionForGuild(guildID int64) *discordgo.Session {
 
 // Restart restarts the Manager, and rescales if necessary, all with
 // zero downtime.
-func (m *Manager) Restart() (err error) {
+func (m *Manager) Restart() (nMgr *Manager, err error) {
 	// Lock the old Manager for reading.
 	m.RLock()
 
@@ -149,7 +149,7 @@ func (m *Manager) Restart() (err error) {
 	mgr, err := New(m.token)
 	if err != nil {
 		m.RUnlock()
-		return
+		return m, err
 	}
 
 	// Apply the same handlers.
@@ -167,21 +167,14 @@ func (m *Manager) Restart() (err error) {
 	// Start the new Manager so that it can begin handling events.
 	err = mgr.Start()
 	if err != nil {
-		return
+		return m, err
 	}
 
 	// Shutdown the old Manager. The new Manager is already handling
 	// events.
 	m.Shutdown()
-	// Lock the Manager as we replace the old one with the new one.
-	m.Lock()
-	defer m.Unlock()
-	// Replace the old Manager with the new Manager.
-	m = mgr
-	// Voila! Zero downtime, because there is always
-	// at least one Manager handling events.
 
-	return
+	return mgr, nil
 }
 
 // Start starts the Manager.
