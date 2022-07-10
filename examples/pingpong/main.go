@@ -95,9 +95,11 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// If the message is "restart" restart the shard manager and rescale
 	// if necessary, all with zero down-time.
 	if m.Content == "restart" {
+		var err error
 		s.ChannelMessageSend(m.ChannelID, "[INFO] Restarting shard manager...")
 		fmt.Println("[INFO] Restarting shard manager...")
-		if err := Mgr.Restart(); err != nil {
+		Mgr, err = Mgr.Restart()
+		if err != nil {
 			fmt.Println("[ERROR] Error restarting manager,", err)
 		} else {
 			s.ChannelMessageSend(m.ChannelID, "[SUCCESS] Manager successfully restarted.")
