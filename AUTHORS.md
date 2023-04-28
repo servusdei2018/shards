@@ -8,4 +8,4 @@ Names should be added to this file as `Name or Organization <github url>`. Pleas
 
 ## Authors
 
- - Nate Bracy <github.com/servusDei2018>
+ - Nate Bracy <github.com/servusdei2018>

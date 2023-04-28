@@ -7,4 +7,8 @@ This is the official list of people who have contributed code to the Shardman re
 Names should be added to this file as `Name or Organization <github url>`. Please keep the list sorted.
 
 ## Contributors
+- Aliaksandr Zakharenka <github.com/zakharenka>
+- James Clark <github.com/jameshclrk>
+- Norbert Klar <github.com/enkeyz>
 - Yannick Seeger <github.com/yk-sgr>
+- ZerGo0 <github.com/ZerGo0>
