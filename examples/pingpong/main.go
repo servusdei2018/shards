@@ -98,7 +98,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		var err error
 		s.ChannelMessageSend(m.ChannelID, "[INFO] Restarting shard manager...")
 		fmt.Println("[INFO] Restarting shard manager...")
-		Mgr, err = Mgr.Restart()
+		err = Mgr.Restart()
 		if err != nil {
 			fmt.Println("[ERROR] Error restarting manager,", err)
 		} else {
