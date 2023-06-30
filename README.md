@@ -26,4 +26,4 @@ import (
 
 ## Documentation
 
-- [![Go Reference](https://pkg.go.dev/badge/github.com/servusdei2018/shards.svg)](https://pkg.go.dev/github.com/servusdei2018/shards)
+- [![Go Reference](https://pkg.go.dev/badge/github.com/servusdei2018/shards.svg)](https://pkg.go.dev/github.com/servusdei2018/shards/v2)
