@@ -11,7 +11,7 @@ Configurable, scalable and automatic sharding library for `discordgo`.
 This assumes you already have a working Go environment, if not please [install Go](https://golang.org/doc/install) first.
 
 ```sh
-go get github.com/servusdei2018/shards
+go get github.com/servusdei2018/shards/v2
 ```
 
 ### Usage
@@ -20,7 +20,7 @@ Import the package into your project, like so:
 
 ```go
 import (
-	"github.com/servusdei2018/shards"
+	"github.com/servusdei2018/shards/v2"
 )
 ```
 
