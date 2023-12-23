@@ -82,19 +82,17 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-	// If the message is "ping" reply with "Pong!"
-	if m.Content == "ping" {
+
+	switch m.Content {
+	case "ping":
+		// If the message is "ping" reply with "Pong!"
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
-	}
-
-	// If the message is "pong" reply with "Ping!"
-	if m.Content == "pong" {
+	case "pong":
+		// If the message is "pong" reply with "Ping!"
 		s.ChannelMessageSend(m.ChannelID, "Ping!")
-	}
-
-	// If the message is "restart" restart the shard manager and rescale
-	// if necessary, all with zero down-time.
-	if m.Content == "restart" {
+	case "restart":
+		// If the message is "restart" restart the shard manager and rescale
+		// if necessary, all with zero down-time.
 		var err error
 		s.ChannelMessageSend(m.ChannelID, "[INFO] Restarting shard manager...")
 		fmt.Println("[INFO] Restarting shard manager...")

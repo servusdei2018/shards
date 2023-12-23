@@ -1,7 +1,7 @@
 ## DiscordGo/Shards Ping Pong Example
 
 This example demonstrates how to utilize [DiscordGo](https://github.com/bwmarrin/discordgo)
-and [Shards](https://github.com/servusDei2018/shards) to create an extremely
+and [Shards](https://github.com/servusdei2018/shards) to create an extremely
 scalable Ping Pong Bot.
 
 This Bot will respond to "ping" with "Pong!" and "pong" with "Ping!".
@@ -9,7 +9,7 @@ This Bot will also respond to "restart" by performing a zero-downtime
 rescaling restart. Simply enter this command to see it restart live,
 without going offline.
 
-**Open an issue on [Shards](https://github.com/servusDei2018/shards) if you are
+**Open an issue on [Shards](https://github.com/servusdei2018/shards) if you are
 having difficulties, or, join [Discord Gophers](https://discord.gg/0f1SbxBZjYoCtNPP)
 Discord chat channel for support.**
 

@@ -11,7 +11,7 @@ This document outlines the guidelines for contributing to the project.
 
 ## Issues
 
-The [issue tracker](https://github.com/servusDei2018/shards/issues) is the preferred channel for [bug reports](#bug-reports), [features requests](#feature-requests) and submitting [pull requests](#pull-requests).
+The [issue tracker](https://github.com/servusdei2018/shards/issues) is the preferred channel for [bug reports](#bug-reports), [features requests](#feature-requests) and submitting [pull requests](#pull-requests).
 
 ## Bug Reports
 
