@@ -12,7 +12,7 @@ const (
 	// TIMELIMIT specifies how long to pause between connecting shards.
 	TIMELIMIT = time.Second * 5
 	// VERSION specifies the shards module version. Follows semantic versioning (semver.org).
-	VERSION = "2.2.0"
+	VERSION = "2.3.0"
 )
 
 // A Shard represents a shard.
@@ -54,6 +54,38 @@ func (s *Shard) ApplicationCommandCreate(guildID string, cmd *discordgo.Applicat
 
 	_, err := s.Session.ApplicationCommandCreate(s.Session.State.User.ID, guildID, cmd)
 	return err
+}
+
+// ApplicationCommandBulkOverwrite registers a series of application commands for a Shard,
+// overwriting existing commands.
+//
+// Shouldn't be called before Initialization.
+func (s *Shard) ApplicationCommandBulkOverwrite(guildID string, cmds []*discordgo.ApplicationCommand) error {
+	s.Lock()
+	defer s.Unlock()
+
+	// Referencing s.Session before Initialization will result in a nil pointer dereference panic.
+	if s.Session == nil {
+		return fmt.Errorf("error: shard.ApplicationCommandCreate must not be called before shard.Init")
+	}
+
+	_, err := s.Session.ApplicationCommandBulkOverwrite(s.Session.State.User.ID, guildID, cmds)
+	return err
+}
+
+// ApplicationCommandDelete deregisters an application command for a Shard.
+//
+// Shouldn't be called before Initialization.
+func (s *Shard) ApplicationCommandDelete(guildID string, cmd *discordgo.ApplicationCommand) error {
+	s.Lock()
+	defer s.Unlock()
+
+	// Referencing s.Session before Initialization will result in a nil pointer dereference panic.
+	if s.Session == nil {
+		return fmt.Errorf("error: shard.ApplicationCommandCreate must not be called before shard.Init")
+	}
+
+	return s.Session.ApplicationCommandDelete(s.Session.State.User.ID, guildID, cmd.ID)
 }
 
 // GuildCount returns the amount of guilds that a Shard is handling.

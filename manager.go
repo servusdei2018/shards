@@ -54,8 +54,38 @@ func (m *Manager) ApplicationCommandCreate(guildID string, cmd *discordgo.Applic
 	return
 }
 
-// GuildCount returns the amount of guilds that a Manager's Shards are
-// handling.
+// ApplicationCommandBulkOverwrite registers a series of application commands for all Shards,
+// overwriting existing commands.
+func (m *Manager) ApplicationCommandBulkOverwrite(guildID string, cmds []*discordgo.ApplicationCommand) (errs []error) {
+	m.Lock()
+	defer m.Unlock()
+
+	for _, shard := range m.Shards {
+		err := shard.ApplicationCommandBulkOverwrite(guildID, cmds)
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	return
+}
+
+// ApplicationCommandDelete deregisters an application command for all Shards.
+func (m *Manager) ApplicationCommandDelete(guildID string, cmd *discordgo.ApplicationCommand) (errs []error) {
+	m.Lock()
+	defer m.Unlock()
+
+	for _, shard := range m.Shards {
+		err := shard.ApplicationCommandDelete(guildID, cmd)
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	return
+}
+
+// GuildCount returns the amount of guilds that a Manager's Shards are handling.
 func (m *Manager) GuildCount() (count int) {
 	m.RLock()
 	defer m.RUnlock()
@@ -80,6 +110,9 @@ func New(token string) (mgr *Manager, err error) {
 
 	// Initialize the gateway.
 	mgr.Gateway, err = discordgo.New(token)
+	if err != nil {
+		return
+	}
 
 	// Set recommended shard count.
 	resp, err := mgr.Gateway.GatewayBot()
@@ -114,8 +147,7 @@ func (m *Manager) RegisterIntent(intent discordgo.Intent) {
 	m.Intent = intent
 }
 
-// SessionForDM returns the proper session for sending and receiving
-// DM's.
+// SessionForDM returns the proper session for sending and receiving DM's.
 func (m *Manager) SessionForDM() *discordgo.Session {
 	m.RLock()
 	defer m.RUnlock()
@@ -139,8 +171,7 @@ func (m *Manager) SessionForGuild(guildID int64) *discordgo.Session {
 	return m.Shards[(guildID>>22)%int64(m.ShardCount)].Session
 }
 
-// Restart restarts the Manager, and rescales if necessary, all with
-// zero downtime.
+// Restart restarts the Manager, and rescales if necessary, all with zero downtime.
 func (m *Manager) Restart() (nMgr *Manager, err error) {
 	// Lock the old Manager for reading.
 	m.RLock()
@@ -158,7 +189,7 @@ func (m *Manager) Restart() (nMgr *Manager, err error) {
 	}
 
 	// Apply the same intent
-	mgr.RegisterIntent(m.Intent)	
+	mgr.RegisterIntent(m.Intent)
 
 	// We have no need to lock the old Manager at this point, and
 	// starting the new one will take some time.
