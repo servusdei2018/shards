@@ -1,4 +1,5 @@
-# Shards [![Build Status](https://travis-ci.com/servusDei2018/shards.svg?branch=master)](https://travis-ci.com/servusDei2018/shards) ![](https://img.shields.io/github/issues/servusdei2018/shards) [![CodeFactor](https://www.codefactor.io/repository/github/servusdei2018/shards/badge)](https://www.codefactor.io/repository/github/servusdei2018/shards)
+# Shards [![Build Status](https://travis-ci.com/servusDei2018/shards.svg?branch=master)](https://travis-ci.com/servusDei2018/shards) [![CodeFactor](https://www.codefactor.io/repository/github/servusdei2018/shards/badge)](https://www.codefactor.io/repository/github/servusdei2018/shards) [![Go Reference](https://pkg.go.dev/badge/github.com/servusdei2018/shards.svg)](https://pkg.go.dev/github.com/servusdei2018/shards/v2)
+
 Configurable, scalable and automatic sharding library for `discordgo`.
 
 ## Features
@@ -19,11 +20,5 @@ go get github.com/servusdei2018/shards/v2
 Import the package into your project, like so:
 
 ```go
-import (
-	"github.com/servusdei2018/shards/v2"
-)
+import "github.com/servusdei2018/shards/v2"
 ```
-
-## Documentation
-
-- [![Go Reference](https://pkg.go.dev/badge/github.com/servusdei2018/shards.svg)](https://pkg.go.dev/github.com/servusdei2018/shards/v2)
