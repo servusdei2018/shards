@@ -1,5 +1,9 @@
 language: go
 
+arch: amd64
+os: linux
+dist: focal
+
 go:
 - 1.x
 - master
