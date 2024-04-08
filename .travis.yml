@@ -6,6 +6,5 @@ dist: focal
 
 go:
 - 1.x
-- master
 
 script: go build
