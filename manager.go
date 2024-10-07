@@ -30,70 +30,52 @@ type Manager struct {
 // AddHandler registers an event handler for all Shards.
 func (m *Manager) AddHandler(handler interface{}) {
 	m.Lock()
-	defer m.Unlock()
-
 	m.handlers = append(m.handlers, handler)
-
-	for _, shard := range m.Shards {
+	m.Unlock()
+	m.apply(func(shard *Shard) {
 		shard.AddHandler(handler)
-	}
+	})
 }
 
 // ApplicationCommandCreate registers an application command for all Shards.
 func (m *Manager) ApplicationCommandCreate(guildID string, cmd *discordgo.ApplicationCommand) (errs []error) {
-	m.Lock()
-	defer m.Unlock()
-
-	for _, shard := range m.Shards {
+	m.apply(func(shard *Shard) {
 		err := shard.ApplicationCommandCreate(guildID, cmd)
 		if err != nil {
 			errs = append(errs, err)
 		}
-	}
-
+	})
 	return
 }
 
 // ApplicationCommandBulkOverwrite registers a series of application commands for all Shards,
 // overwriting existing commands.
 func (m *Manager) ApplicationCommandBulkOverwrite(guildID string, cmds []*discordgo.ApplicationCommand) (errs []error) {
-	m.Lock()
-	defer m.Unlock()
-
-	for _, shard := range m.Shards {
+	m.apply(func(shard *Shard) {
 		err := shard.ApplicationCommandBulkOverwrite(guildID, cmds)
 		if err != nil {
 			errs = append(errs, err)
 		}
-	}
-
+	})
 	return
 }
 
 // ApplicationCommandDelete deregisters an application command for all Shards.
 func (m *Manager) ApplicationCommandDelete(guildID string, cmd *discordgo.ApplicationCommand) (errs []error) {
-	m.Lock()
-	defer m.Unlock()
-
-	for _, shard := range m.Shards {
+	m.apply(func(shard *Shard) {
 		err := shard.ApplicationCommandDelete(guildID, cmd)
 		if err != nil {
 			errs = append(errs, err)
 		}
-	}
-
+	})
 	return
 }
 
 // GuildCount returns the amount of guilds that a Manager's Shards are handling.
 func (m *Manager) GuildCount() (count int) {
-	m.RLock()
-	defer m.RUnlock()
-
-	for _, shard := range m.Shards {
+	m.apply(func(shard *Shard) {
 		count += shard.GuildCount()
-	}
-
+	})
 	return
 }
 
@@ -120,11 +102,7 @@ func New(token string) (mgr *Manager, err error) {
 		return
 	}
 
-	if resp.Shards < 1 {
-		mgr.ShardCount = 1
-	} else {
-		mgr.ShardCount = resp.Shards
-	}
+	mgr.SetShardCount(resp.Shards)
 
 	return
 }
@@ -132,19 +110,19 @@ func New(token string) (mgr *Manager, err error) {
 // SetShardCount sets the shard count.
 // The new shard count won't take effect until the Manager is restarted.
 func (m *Manager) SetShardCount(count int) {
-	m.Lock()
-	defer m.Unlock()
-
-	if count > 0 {
-		m.ShardCount = count
+	if count < 1 {
+		return
 	}
+	m.Lock()
+	m.ShardCount = count
+	m.Unlock()
 }
 
 // RegisterIntent sets the Intent for all Shards' sessions.
 func (m *Manager) RegisterIntent(intent discordgo.Intent) {
 	m.Lock()
-	defer m.Unlock()
 	m.Intent = intent
+	m.Unlock()
 }
 
 // SessionForDM returns the proper session for sending and receiving DM's.
@@ -246,14 +224,21 @@ func (m *Manager) Start() (err error) {
 
 // Shutdown gracefully terminates the Manager.
 func (m *Manager) Shutdown() (err error) {
-	m.Lock()
-	defer m.Unlock()
-
-	// Stop all shards.
-	for _, shard := range m.Shards {
-		if err = shard.Stop(); err != nil {
+	m.apply(func(shard *Shard) {
+		err = shard.Stop()
+		if err != nil {
 			return
 		}
-	}
+	})
 	return
+}
+
+// apply applies a function to all shards.
+func (m *Manager) apply(fn func(*Shard)) {
+	m.RLock()
+	defer m.RUnlock()
+
+	for _, shard := range m.Shards {
+		fn(shard)
+	}
 }
