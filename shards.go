@@ -89,17 +89,17 @@ func (s *Shard) ApplicationCommandDelete(guildID string, cmd *discordgo.Applicat
 }
 
 // GuildCount returns the amount of guilds that a Shard is handling.
-func (s *Shard) GuildCount() (count int) {
+func (s *Shard) GuildCount() int {
 	s.RLock()
 	defer s.RUnlock()
 
 	if s.Session != nil {
 		s.Session.State.RLock()
-		count += len(s.Session.State.Guilds)
-		s.Session.State.RUnlock()
+		defer s.Session.State.RUnlock()
+		return len(s.Session.State.Guilds)
 	}
 
-	return
+	return 0
 }
 
 // Init initializes a shard with a bot token, its Shard ID, the total
@@ -137,12 +137,13 @@ func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) 
 }
 
 // Stop stops a shard.
-func (s *Shard) Stop() (err error) {
+func (s *Shard) Stop() error {
 	s.Lock()
 	defer s.Unlock()
 
-	// Close the session.
-	err = s.Session.Close()
+	if s.Session == nil {
+		return fmt.Errorf("error: shard not initialized")
+	}
 
-	return
+	return s.Session.Close()
 }
