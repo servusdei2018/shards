@@ -1,6 +1,7 @@
 package shards
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -25,6 +26,9 @@ type Manager struct {
 
 	// Discord bot token.
 	token string
+
+	// Should state tracking be enabled.
+	stateEnabled bool
 }
 
 // AddHandler registers an event handler for all Shards.
@@ -85,9 +89,21 @@ func (m *Manager) GuildCount() (count int) {
 // Example:
 // mgr := shards.New("Bot TOKEN")
 func New(token string) (mgr *Manager, err error) {
-	// Initialize the Manager with provided bot token.
+	return NewWithConfig(token, DefaultConfig())
+}
+
+// NewWithConfig creates a new Manager with the provided configuration.
+// After calling NewWithConfig, call Start to begin connecting the shards.
+func NewWithConfig(token string, config *Config) (mgr *Manager, err error) {
+	if config == nil {
+		return nil, fmt.Errorf("error: configuration cannot be nil")
+	}
+
+	// Initialize the Manager with provided configuration.
 	mgr = &Manager{
-		token: token,
+		stateEnabled: config.StateEnabled,
+		token:        token,
+		Intent:       config.Intent,
 	}
 
 	// Initialize the gateway.
@@ -96,13 +112,8 @@ func New(token string) (mgr *Manager, err error) {
 		return
 	}
 
-	// Set recommended shard count.
-	resp, err := mgr.Gateway.GatewayBot()
-	if err != nil {
-		return
-	}
-
-	mgr.SetShardCount(resp.Shards)
+	// Set shard count.
+	mgr.SetShardCount(config.ShardCount)
 
 	return
 }
@@ -119,6 +130,8 @@ func (m *Manager) SetShardCount(count int) {
 }
 
 // RegisterIntent sets the Intent for all Shards' sessions.
+//
+// Note: Changing the intent will not take effect until the Manager is restarted.
 func (m *Manager) RegisterIntent(intent discordgo.Intent) {
 	m.Lock()
 	m.Intent = intent
@@ -209,7 +222,7 @@ func (m *Manager) Start() (err error) {
 			shard.AddHandler(handler)
 		}
 		// Connect shard.
-		err = shard.Init(m.token, id, m.ShardCount, m.Intent)
+		err = shard.Init(m.token, id, m.ShardCount, m.Intent, m.stateEnabled)
 		if err != nil {
 			return
 		}
