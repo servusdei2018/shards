@@ -12,7 +12,7 @@ const (
 	// TIMELIMIT specifies how long to pause between connecting shards.
 	TIMELIMIT = time.Second * 5
 	// VERSION specifies the shards module version. Follows semantic versioning (semver.org).
-	VERSION = "2.4.0"
+	VERSION = "2.5.0"
 )
 
 // A Shard represents a shard.
@@ -104,7 +104,7 @@ func (s *Shard) GuildCount() int {
 
 // Init initializes a shard with a bot token, its Shard ID, the total
 // amount of shards, and a Discord intent.
-func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) (err error) {
+func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent, stateEnabled bool) (err error) {
 	s.Lock()
 	defer s.Unlock()
 
@@ -121,6 +121,9 @@ func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) 
 	// Shard the session.
 	s.Session.ShardCount = s.ShardCount
 	s.Session.ShardID = s.ID
+
+	// Configure state tracking.
+	s.Session.StateEnabled = stateEnabled
 
 	// Identify our intent.
 	s.Session.Identify.Intents = intent
