@@ -112,13 +112,13 @@ func NewWithConfig(token string, config *Config) (mgr *Manager, err error) {
 		return
 	}
 
-  resp, err := mgr.Gateway.GatewayBot()
-  if err != nil {
-    return nil, fmt.Errorf("error: failed to fetch recommended shard count: %v", err)
-  }
+	resp, err := mgr.Gateway.GatewayBot()
+	if err != nil {
+		return nil, fmt.Errorf("error: failed to fetch recommended shard count: %v", err)
+	}
 
-  if config.ShardCount > 0 && config.ShardCount > resp.Shards {
-    mgr.SetShardCount(config.ShardCount)
+	if config.ShardCount > 0 && config.ShardCount > resp.Shards {
+		mgr.SetShardCount(config.ShardCount)
 	} else {
 		mgr.SetShardCount(resp.Shards)
 	}
