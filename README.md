@@ -1,4 +1,4 @@
-# Shards [![Build Status](https://api.travis-ci.com/servusDei2018/shards.svg?branch=master)](https://app.travis-ci.com/github/servusdei2018/shards) [![CodeFactor](https://www.codefactor.io/repository/github/servusdei2018/shards/badge)](https://www.codefactor.io/repository/github/servusdei2018/shards) [![Go Reference](https://pkg.go.dev/badge/github.com/servusdei2018/shards.svg)](https://pkg.go.dev/github.com/servusdei2018/shards/v2)
+# Shards [![CircleCI](https://dl.circleci.com/status-badge/img/gh/servusdei2018/shards/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/servusdei2018/shards/tree/master) [![CodeFactor](https://www.codefactor.io/repository/github/servusdei2018/shards/badge)](https://www.codefactor.io/repository/github/servusdei2018/shards) [![Go Reference](https://pkg.go.dev/badge/github.com/servusdei2018/shards.svg)](https://pkg.go.dev/github.com/servusdei2018/shards/v2)
 
 Configurable, scalable and automatic sharding library for `discordgo`.
 
