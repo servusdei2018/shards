@@ -31,13 +31,24 @@ type Manager struct {
 	stateEnabled bool
 }
 
-// AddHandler registers an event handler for all Shards.
+// AddHandler registers an event handler that will be fired anytime the Discord WSAPI event that matches the function fires.
+//
+// Shouldn't be called after Init or results in undefined behavior.
 func (m *Manager) AddHandler(handler interface{}) {
 	m.Lock()
 	m.handlers = append(m.handlers, handler)
 	m.Unlock()
 	m.apply(func(shard *Shard) {
 		shard.AddHandler(handler)
+	})
+}
+
+// AddHandlerOnce registers an event handler that will be fired the next time the Discord WSAPI event that matches the function fires.
+//
+// Calling this method before the Shard is initialized will panic.
+func (m *Manager) AddHandlerOnce(handler interface{}) {
+	m.apply(func(shard *Shard) {
+		shard.AddHandlerOnce(handler)
 	})
 }
 

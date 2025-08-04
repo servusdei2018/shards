@@ -12,7 +12,7 @@ const (
 	// TIMELIMIT specifies how long to pause between connecting shards.
 	TIMELIMIT = time.Second * 5
 	// VERSION specifies the shards module version. Follows semantic versioning (semver.org).
-	VERSION = "2.5.0"
+	VERSION = "2.6.0"
 )
 
 // A Shard represents a shard.
@@ -38,6 +38,20 @@ func (s *Shard) AddHandler(handler interface{}) {
 	defer s.Unlock()
 
 	s.handlers = append(s.handlers, handler)
+}
+
+// AddHandlerOnce registers an event handler for a Shard that will only be called once.
+//
+// Calling this method before the Shard is initialized will panic.
+func (s *Shard) AddHandlerOnce(handler interface{}) {
+	s.Lock()
+	defer s.Unlock()
+
+	if s.Session == nil {
+		panic("error: shard.AddHandlerOnce must not be called before shard.Init")
+	}
+
+	s.Session.AddHandlerOnce(handler)
 }
 
 // ApplicationCommandCreate registers an application command for a Shard.
