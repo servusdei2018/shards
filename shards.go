@@ -12,7 +12,7 @@ const (
 	// TIMELIMIT specifies how long to pause between connecting shards.
 	TIMELIMIT = time.Second * 5
 	// VERSION specifies the shards module version. Follows semantic versioning (semver.org).
-	VERSION = "2.6.1"
+	VERSION = "2.6.2"
 )
 
 // A Shard represents a shard.
@@ -27,7 +27,8 @@ type Shard struct {
 	ShardCount int
 
 	// Event handlers.
-	handlers []interface{}
+	handlers     []interface{}
+	handlersOnce []interface{}
 }
 
 // AddHandler registers an event handler for a Shard.
@@ -42,16 +43,12 @@ func (s *Shard) AddHandler(handler interface{}) {
 
 // AddHandlerOnce registers an event handler for a Shard that will only be called once.
 //
-// Calling this method before the Shard is initialized will panic.
+// Shouldn't be called after Init or results in undefined behavior.
 func (s *Shard) AddHandlerOnce(handler interface{}) {
 	s.Lock()
 	defer s.Unlock()
 
-	if s.Session == nil {
-		panic("error: shard.AddHandlerOnce must not be called before shard.Init")
-	}
-
-	s.Session.AddHandlerOnce(handler)
+	s.handlersOnce = append(s.handlersOnce, handler)
 }
 
 // ApplicationCommandCreate registers an application command for a Shard.
@@ -145,6 +142,9 @@ func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent, 
 	// Add handlers to the session.
 	for _, handler := range s.handlers {
 		s.Session.AddHandler(handler)
+	}
+	for _, handler := range s.handlersOnce {
+		s.Session.AddHandlerOnce(handler)
 	}
 
 	// Connect the shard.
