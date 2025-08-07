@@ -22,7 +22,8 @@ type Manager struct {
 	ShardCount int
 
 	// Event handlers.
-	handlers []interface{}
+	handlers     []interface{}
+	handlersOnce []interface{}
 
 	// Discord bot token.
 	token string
@@ -45,8 +46,11 @@ func (m *Manager) AddHandler(handler interface{}) {
 
 // AddHandlerOnce registers an event handler that will be fired the next time the Discord WSAPI event that matches the function fires.
 //
-// Calling this method before the Shard is initialized will panic.
+// Shouldn't be called after Init or results in undefined behavior.
 func (m *Manager) AddHandlerOnce(handler interface{}) {
+	m.Lock()
+	m.handlersOnce = append(m.handlersOnce, handler)
+	m.Unlock()
 	m.apply(func(shard *Shard) {
 		shard.AddHandlerOnce(handler)
 	})
@@ -197,6 +201,9 @@ func (m *Manager) Restart() (nMgr *Manager, err error) {
 	for _, handler := range m.handlers {
 		mgr.AddHandler(handler)
 	}
+	for _, handler := range m.handlersOnce {
+		mgr.AddHandlerOnce(handler)
+	}
 
 	// Apply the same intent
 	mgr.RegisterIntent(m.Intent)
@@ -239,6 +246,9 @@ func (m *Manager) Start() (err error) {
 		// Add handlers to this shard.
 		for _, handler := range m.handlers {
 			shard.AddHandler(handler)
+		}
+		for _, handler := range m.handlersOnce {
+			shard.AddHandlerOnce(handler)
 		}
 		// Connect shard.
 		err = shard.Init(m.token, id, m.ShardCount, m.Intent, m.stateEnabled)
