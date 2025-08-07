@@ -11,26 +11,26 @@ import (
 	"github.com/servusdei2018/shards/v2"
 )
 
-// Global variables.
 var (
-	Mgr *shards.Manager
-)
-
-// Variables used for command line parameters.
-var (
-	Token string
+	mgr   *shards.Manager
+	token string
 )
 
 func init() {
-	flag.StringVar(&Token, "t", "", "Bot Token")
+	flag.StringVar(&token, "t", "", "Bot Token")
 	flag.Parse()
+
+	if token == "" {
+		fmt.Println("[ERROR] Bot token is required.")
+		os.Exit(1)
+	}
 }
 
 func main() {
 	var err error
 
 	// Create a new shard manager using the provided bot token.
-	Mgr, err = shards.New("Bot " + Token)
+	mgr, err = shards.New("Bot " + token)
 	if err != nil {
 		fmt.Println("[ERROR] Error creating manager,", err)
 		return
@@ -38,17 +38,17 @@ func main() {
 
 	// Register the messageCreate func as a callback for MessageCreate
 	// events.
-	Mgr.AddHandler(messageCreate)
+	mgr.AddHandler(messageCreate)
 	// Register the onConnect func as a callback for Connect events.
-	Mgr.AddHandler(onConnect)
+	mgr.AddHandler(onConnect)
 
 	// In this example, we only care about receiving message events.
-	Mgr.RegisterIntent(discordgo.IntentsGuildMessages)
+	mgr.RegisterIntent(discordgo.IntentsGuildMessages)
 
 	fmt.Println("[INFO] Starting shard manager...")
 
 	// Start all of our shards and begin listening.
-	err = Mgr.Start()
+	err = mgr.Start()
 	if err != nil {
 		fmt.Println("[ERROR] Error starting manager,", err)
 		return
@@ -57,12 +57,12 @@ func main() {
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("[SUCCESS] Bot is now running.  Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
 
 	// Cleanly close down the Manager.
 	fmt.Println("[INFO] Stopping shard manager...")
-	Mgr.Shutdown()
+	mgr.Shutdown()
 	fmt.Println("[SUCCESS] Shard manager stopped. Bot is shut down.")
 }
 
@@ -96,7 +96,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		var err error
 		s.ChannelMessageSend(m.ChannelID, "[INFO] Restarting shard manager...")
 		fmt.Println("[INFO] Restarting shard manager...")
-		Mgr, err = Mgr.Restart()
+		mgr, err = mgr.Restart()
 		if err != nil {
 			fmt.Println("[ERROR] Error restarting manager,", err)
 		} else {

@@ -10,16 +10,15 @@ rescaling restart. Simply enter this command to see it restart live,
 without going offline.
 
 **Open an issue on [Shards](https://github.com/servusdei2018/shards) if you are
-having difficulties, or, join [Discord Gophers](https://discord.gg/0f1SbxBZjYoCtNPP)
-Discord chat channel for support.**
+having difficulties, or, join the [Discord Gophers](https://discord.gg/0f1SbxBZjYoCtNPP)
+server for support.**
 
 ### Build
 
 This assumes you already have a working Go environment setup and that
 DiscordGo is correctly installed on your system.
 
-
-From within the pingpong example folder, run the below command to
+From within the `pingpong` example folder, run the below command to
 compile the example.
 
 ```sh

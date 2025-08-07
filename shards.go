@@ -12,7 +12,7 @@ const (
 	// TIMELIMIT specifies how long to pause between connecting shards.
 	TIMELIMIT = time.Second * 5
 	// VERSION specifies the shards module version. Follows semantic versioning (semver.org).
-	VERSION = "2.2.0"
+	VERSION = "2.6.2"
 )
 
 // A Shard represents a shard.
@@ -27,7 +27,8 @@ type Shard struct {
 	ShardCount int
 
 	// Event handlers.
-	handlers []interface{}
+	handlers     []interface{}
+	handlersOnce []interface{}
 }
 
 // AddHandler registers an event handler for a Shard.
@@ -38,6 +39,16 @@ func (s *Shard) AddHandler(handler interface{}) {
 	defer s.Unlock()
 
 	s.handlers = append(s.handlers, handler)
+}
+
+// AddHandlerOnce registers an event handler for a Shard that will only be called once.
+//
+// Shouldn't be called after Init or results in undefined behavior.
+func (s *Shard) AddHandlerOnce(handler interface{}) {
+	s.Lock()
+	defer s.Unlock()
+
+	s.handlersOnce = append(s.handlersOnce, handler)
 }
 
 // ApplicationCommandCreate registers an application command for a Shard.
@@ -56,23 +67,55 @@ func (s *Shard) ApplicationCommandCreate(guildID string, cmd *discordgo.Applicat
 	return err
 }
 
+// ApplicationCommandBulkOverwrite registers a series of application commands for a Shard,
+// overwriting existing commands.
+//
+// Shouldn't be called before Initialization.
+func (s *Shard) ApplicationCommandBulkOverwrite(guildID string, cmds []*discordgo.ApplicationCommand) error {
+	s.Lock()
+	defer s.Unlock()
+
+	// Referencing s.Session before Initialization will result in a nil pointer dereference panic.
+	if s.Session == nil {
+		return fmt.Errorf("error: shard.ApplicationCommandCreate must not be called before shard.Init")
+	}
+
+	_, err := s.Session.ApplicationCommandBulkOverwrite(s.Session.State.User.ID, guildID, cmds)
+	return err
+}
+
+// ApplicationCommandDelete deregisters an application command for a Shard.
+//
+// Shouldn't be called before Initialization.
+func (s *Shard) ApplicationCommandDelete(guildID string, cmd *discordgo.ApplicationCommand) error {
+	s.Lock()
+	defer s.Unlock()
+
+	// Referencing s.Session before Initialization will result in a nil pointer dereference panic.
+	if s.Session == nil {
+		return fmt.Errorf("error: shard.ApplicationCommandCreate must not be called before shard.Init")
+	}
+
+	return s.Session.ApplicationCommandDelete(s.Session.State.User.ID, guildID, cmd.ID)
+}
+
 // GuildCount returns the amount of guilds that a Shard is handling.
-func (s *Shard) GuildCount() (count int) {
+func (s *Shard) GuildCount() int {
 	s.RLock()
 	defer s.RUnlock()
 
 	if s.Session != nil {
 		s.Session.State.RLock()
-		count += len(s.Session.State.Guilds)
-		s.Session.State.RUnlock()
+		defer s.Session.State.RUnlock()
+		return len(s.Session.State.Guilds)
 	}
 
-	return
+	return 0
 }
 
 // Init initializes a shard with a bot token, its Shard ID, the total
 // amount of shards, and a Discord intent.
-func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) (err error) {
+func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent, stateEnabled bool) (err error) {
 	s.Lock()
 	defer s.Unlock()
 
@@ -90,12 +133,18 @@ func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) 
 	s.Session.ShardCount = s.ShardCount
 	s.Session.ShardID = s.ID
 
+	// Configure state tracking.
+	s.Session.StateEnabled = stateEnabled
+
 	// Identify our intent.
 	s.Session.Identify.Intents = intent
 
 	// Add handlers to the session.
 	for _, handler := range s.handlers {
 		s.Session.AddHandler(handler)
+	}
+	for _, handler := range s.handlersOnce {
+		s.Session.AddHandlerOnce(handler)
 	}
 
 	// Connect the shard.
@@ -105,12 +154,13 @@ func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) 
 }
 
 // Stop stops a shard.
-func (s *Shard) Stop() (err error) {
+func (s *Shard) Stop() error {
 	s.Lock()
 	defer s.Unlock()
 
-	// Close the session.
-	err = s.Session.Close()
+	if s.Session == nil {
+		return fmt.Errorf("error: shard not initialized")
+	}
 
-	return
+	return s.Session.Close()
 }
