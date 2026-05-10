@@ -7,6 +7,7 @@ This is the official list of people who have contributed code to the Shards repo
 Names should be added to this file as `Name or Organization <github url>`. Please keep the list sorted.
 
 ## Contributors
+- Andrew Craig <github.com/DeathHound6>
 - Aliaksandr Zakharenka <github.com/zakharenka>
 - James Clark <github.com/jameshclrk>
 - Norbert Klar <github.com/enkeyz>
