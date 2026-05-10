@@ -162,9 +162,16 @@ func (m *Manager) RegisterIntent(intent discordgo.Intent) {
 }
 
 // SessionForDM returns the proper session for sending and receiving DM's.
+//
+// Returns nil if no shards are available (e.g. Start has not been called yet).
 func (m *Manager) SessionForDM() *discordgo.Session {
 	m.RLock()
 	defer m.RUnlock()
+
+	// Return nil if no shards are available.
+	if len(m.Shards) == 0 {
+		return nil
+	}
 
 	// Per Discord documentation, Shard 0 is the only shard which can
 	// send and receive DM's.
@@ -174,9 +181,16 @@ func (m *Manager) SessionForDM() *discordgo.Session {
 }
 
 // SessionForGuild returns the proper session for the specified guild.
+//
+// Returns nil if no shards are available (e.g. Start has not been called yet).
 func (m *Manager) SessionForGuild(guildID int64) *discordgo.Session {
 	m.RLock()
 	defer m.RUnlock()
+
+	// Return nil if no shards are available or if ShardCount is zero.
+	if len(m.Shards) == 0 || m.ShardCount == 0 {
+		return nil
+	}
 
 	// Formula to determine which shard handles a guild, from Discord
 	// docs.
